@@ -6,22 +6,35 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
-// Middleware de depuración CORS
+// Middleware de depuración CORS detallado
 app.use((req, res, next) => {
-  console.log('Solicitud entrante:');
+  console.log('\n=== Nueva Solicitud ===');
+  console.log(`Tiempo: ${new Date().toISOString()}`);
+  console.log('Método:', req.method);
+  console.log('URL:', req.url);
   console.log('Origin:', req.headers.origin);
-  console.log('Method:', req.method);
-  console.log('Headers:', req.headers);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  
+  // Agregar listener para la respuesta
+  res.on('finish', () => {
+    console.log('\n=== Respuesta ===');
+    console.log('Status:', res.statusCode);
+    console.log('Headers:', JSON.stringify(res.getHeaders(), null, 2));
+    console.log('===================\n');
+  });
+  
   next();
 });
 
-// Configuración CORS simplificada
+// Configuración CORS más permisiva para depuración
 app.use(cors({
-  origin: ['https://jobsandjobs.com', process.env.FRONTEND_URL || 'http://localhost:8080'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: true, // Permite todos los orígenes temporalmente
   credentials: true,
-  optionsSuccessStatus: 200
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200,
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  maxAge: 86400 // 24 horas de cache para preflight
 }));
 
 app.use(express.json());
