@@ -8,7 +8,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:8080"
+  origin: [process.env.FRONTEND_URL || "http://localhost:8080", "https://jobsandjobs.com"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
 }));
 app.use(express.json());
 
