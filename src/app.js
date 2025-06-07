@@ -8,7 +8,14 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || "http://localhost:8080", "https://jobsandjobs.com"],
+  origin: function(origin, callback) {
+    const allowedOrigins = [process.env.FRONTEND_URL || "http://localhost:8080", "https://jobsandjobs.com"];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
