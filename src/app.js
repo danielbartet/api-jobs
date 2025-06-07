@@ -14,7 +14,7 @@ app.use((req, res, next) => {
   console.log('URL:', req.url);
   console.log('Origin:', req.headers.origin);
   console.log('Headers:', JSON.stringify(req.headers, null, 2));
-  
+
   // Agregar listener para la respuesta
   res.on('finish', () => {
     console.log('\n=== Respuesta ===');
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
     console.log('Headers:', JSON.stringify(res.getHeaders(), null, 2));
     console.log('===================\n');
   });
-  
+
   next();
 });
 
