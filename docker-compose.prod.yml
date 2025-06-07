@@ -25,7 +25,7 @@ services:
       - "traefik.http.routers.api-jobs.tls.certresolver=myresolver"
       - "traefik.http.services.api-jobs.loadbalancer.server.port=8086"
     networks:
-      - libgot
+      - traefik
       - api-network
 
   database:
@@ -42,7 +42,7 @@ services:
       - api-network
 
 networks:
-  libgot:
+  traefik:
     external: true
   api-network:
     driver: bridge
