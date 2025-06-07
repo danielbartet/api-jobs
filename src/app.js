@@ -26,9 +26,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configuración CORS más permisiva para depuración
+// Configuración CORS usando orígenes del config
 app.use(cors({
-  origin: true, // Permite todos los orígenes temporalmente
+  origin: config.corsOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -55,6 +55,25 @@ const initializeDatabase = async () => {
     process.exit(1);
   }
 };
+
+// Middleware de manejo de errores CORS
+app.use((err, req, res, next) => {
+  if (err.name === 'CORSError') {
+    console.error('Error CORS:', {
+      message: err.message,
+      origin: req.headers.origin,
+      method: req.method,
+      path: req.path,
+      headers: req.headers
+    });
+    return res.status(403).json({
+      error: 'CORS Error',
+      message: err.message,
+      origin: req.headers.origin
+    });
+  }
+  next(err);
+});
 
 app.listen(config.PORT, async () => {
   await initializeDatabase();

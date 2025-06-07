@@ -15,6 +15,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=leadsdb
       - NODE_ENV=production
+      - CORS_ORIGINS=https://jobsandjobs.com,https://www.jobsandjobs.com
     expose:
       - "8086"
     labels:
@@ -29,7 +30,7 @@ services:
       - "traefik.http.routers.api-jobs.middlewares=api-jobs-compress,cors-headers"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://jobsandjobs.com"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://jobsandjobs.com,https://www.jobsandjobs.com"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.cors-headers.headers.addvaryheader=true"
       # Configuración para redirección HTTP a HTTPS
