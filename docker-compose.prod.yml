@@ -18,13 +18,12 @@ services:
     ports:
       - "8086:8086"
     labels:
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.rule=Host(`${API_HOST:-api.jobsandjobs.com}`)"
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.entrypoints=web,websecure"
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.priority=2"
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.service=${API_SERVICE:-api-jobs}"
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.tls=${TLS_ENABLE:-true}"
-      - "traefik.http.routers.${API_ROUTER:-api-jobs}.tls.certresolver=myresolver"
-      - "traefik.http.services.${API_SERVICE:-api-jobs}.loadbalancer.server.port=8086"
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-jobs.rule=Host(`api.jobsandjobs.com`)"
+      - "traefik.http.routers.api-jobs.entrypoints=websecure"
+      - "traefik.http.routers.api-jobs.tls=true"
+      - "traefik.http.routers.api-jobs.tls.certresolver=myresolver"
+      - "traefik.http.services.api-jobs.loadbalancer.server.port=8086"
     networks:
       - libgot
       - api-network
