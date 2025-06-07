@@ -15,15 +15,23 @@ services:
       - DB_PASSWORD=postgres
       - DB_NAME=leadsdb
       - NODE_ENV=production
-    ports:
-      - "8086:8086"
+    expose:
+      - "8086"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.api-jobs.rule=Host(`api.jobsandjobs.com`)"
       - "traefik.http.routers.api-jobs.entrypoints=websecure"
       - "traefik.http.routers.api-jobs.tls=true"
       - "traefik.http.routers.api-jobs.tls.certresolver=myresolver"
       - "traefik.http.services.api-jobs.loadbalancer.server.port=8086"
+      - "traefik.http.middlewares.api-jobs-compress.compress=true"
+      - "traefik.http.routers.api-jobs.middlewares=api-jobs-compress"
+      # Configuración para redirección HTTP a HTTPS
+      - "traefik.http.routers.api-jobs-http.rule=Host(`api.jobsandjobs.com`)"
+      - "traefik.http.routers.api-jobs-http.entrypoints=web"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.api-jobs-http.middlewares=https-redirect"
     networks:
       - traefik
       - api-network
