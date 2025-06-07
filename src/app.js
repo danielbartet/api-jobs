@@ -6,30 +6,24 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
-// Middleware
-const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:8080",
-  "https://jobsandjobs.com"
-];
+// Middleware de depuración CORS
+app.use((req, res, next) => {
+  console.log('Solicitud entrante:');
+  console.log('Origin:', req.headers.origin);
+  console.log('Method:', req.method);
+  console.log('Headers:', req.headers);
+  next();
+});
 
+// Configuración CORS simplificada
 app.use(cors({
-  origin: function (origin, callback) {
-    // Permitir solicitudes sin origen (como las solicitudes del mismo servidor)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, origin);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
+  origin: ['https://jobsandjobs.com', process.env.FRONTEND_URL || 'http://localhost:8080'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  optionsSuccessStatus: 200,
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  optionsSuccessStatus: 200
 }));
+
 app.use(express.json());
 
 // Rutas
