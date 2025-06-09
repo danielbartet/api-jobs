@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const config = require("./config");
 const leadRoutes = require("./routes/leadRoutes");
 const logRoutes = require("./routes/logRoutes");
@@ -8,17 +7,25 @@ const app = express();
 
 app.use(express.json());
 
-// Middleware CORS con configuración más permisiva
-app.use(cors({
-  origin: 'https://jobsandjobs.com',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Content-Length', 'Content-Range'],
-  maxAge: 3600,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}));
+// CORS Preflight
+app.options('*', (req, res) => {
+  // Devolver directamente la respuesta OPTIONS con los headers CORS
+  res.header('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '3600');
+  res.status(204).end();
+});
+
+// CORS para todas las demás rutas
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Middleware de logging para diagnóstico
 app.use((req, res, next) => {
