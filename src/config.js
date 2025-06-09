@@ -7,4 +7,5 @@ module.exports = {
   DB_PASSWORD: process.env.DB_PASSWORD || "password",
   DB_NAME: process.env.DB_NAME || "leadsdb",
   DB_PORT: process.env.DB_PORT || 3306,
+  corsOrigins: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ['https://jobsandjobs.com', 'https://www.jobsandjobs.com'],
 };

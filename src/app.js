@@ -26,26 +26,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configuración CORS usando orígenes del config
+// Configuración CORS básica - la configuración principal se maneja en Traefik
 app.use(cors({
-  origin: function(origin, callback) {
-    console.log('Origin recibido:', origin);
-    console.log('Orígenes permitidos:', config.corsOrigins);
-    
-    // Permitir requests sin origin (como PostMan)
-    if (!origin) {
-      console.log('Request sin origin, permitido para desarrollo');
-      return callback(null, true);
-    }
-    
-    if (config.corsOrigins.indexOf(origin) !== -1) {
-      console.log('Origin permitido');
-      callback(null, true);
-    } else {
-      console.log('Origin NO permitido');
-      callback(new Error('No permitido por CORS'));
-    }
-  },
+  origin: true, // Permitir todos los orígenes - Traefik se encargará de filtrar
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
