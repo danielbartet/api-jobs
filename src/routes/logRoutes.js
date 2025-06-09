@@ -9,15 +9,50 @@ const router = express.Router();
 router.post("/save", async (req, res) => {
     try {
         const logEntry = req.body;
+        
+        // Log detallado de la petición recibida
+        console.log('Recibida petición POST /save:', {
+            body: logEntry,
+            headers: req.headers,
+            method: req.method
+        });
+
+        // Log detallado de los campos requeridos
+        console.log('Validación de campos:', {
+            hasTimestamp: Boolean(logEntry.timestamp),
+            timestampType: typeof logEntry.timestamp,
+            timestampValue: logEntry.timestamp,
+            hasPath: Boolean(logEntry.path),
+            pathType: typeof logEntry.path,
+            pathValue: logEntry.path,
+            hasParams: Boolean(logEntry.params),
+            paramsType: typeof logEntry.params,
+            paramsValue: logEntry.params
+        });
 
         if (!logEntry.timestamp || !logEntry.path || !logEntry.params) {
-            return res.status(400).json({ error: "Faltan campos requeridos en el log" });
+            console.log('Error: Faltan campos requeridos:', {
+                missing: {
+                    timestamp: !logEntry.timestamp,
+                    path: !logEntry.path,
+                    params: !logEntry.params
+                }
+            });
+            return res.status(400).json({ 
+                error: "Faltan campos requeridos en el log",
+                missing: {
+                    timestamp: !logEntry.timestamp,
+                    path: !logEntry.path,
+                    params: !logEntry.params
+                }
+            });
         }
 
         const logId = await createLog(logEntry);
+        console.log('Log guardado exitosamente:', { logId });
         res.status(201).json({ success: true, logId });
     } catch (error) {
-        console.error(error);
+        console.error('Error al guardar log:', error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 });
