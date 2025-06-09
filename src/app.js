@@ -41,7 +41,20 @@ app.use(express.json());
 
 // Rutas
 app.use("/api/leads", leadRoutes);
-app.use("/api/logs", logRoutes);
+
+// Agregar configuración CORS específica para /api/logs
+app.use("/api/logs", (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+}, logRoutes);
 
 // Inicializar tablas
 const { createLeadLogsTable } = require("./migrations/createLeadLogsTable");
