@@ -6,6 +6,8 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
+app.use(express.json());
+
 // Middleware CORS específico
 app.use(cors({
   origin: (origin, callback) => {
@@ -20,7 +22,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
-app.use(express.json());
+// Middleware de logging para diagnóstico
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Headers:', req.headers);
+  if (req.body) console.log('Body:', req.body);
+  next();
+});
 
 // Rutas
 app.use("/api/leads", leadRoutes);
