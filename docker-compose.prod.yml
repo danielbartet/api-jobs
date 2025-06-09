@@ -15,14 +15,25 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=leadsdb
       - NODE_ENV=production
-      - CORS_ORIGINS=*
-      - CORS_CREDENTIALS=true
+      - CORS_ORIGINS=https://jobsandjobs.com
     expose:
       - "8086"
-    ports:
-      - "8086:8086"
     networks:
-      - traefik
+      - api-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: api-jobs-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
+    networks:
       - api-network
 
   database:
@@ -39,8 +50,6 @@ services:
       - api-network
 
 networks:
-  traefik:
-    external: true
   api-network:
     driver: bridge
 

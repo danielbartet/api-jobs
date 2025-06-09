@@ -5,33 +5,38 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
+// Middleware de logging CORS para diagnóstico
+app.use((req, res, next) => {
+  console.log('=== CORS Debug ===');
+  console.log('Method:', req.method);
+  console.log('Origin:', req.headers.origin);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  next();
+});
+
 app.use(express.json());
 
-// CORS Preflight
+// Manejo específico de OPTIONS para CORS preflight
 app.options('*', (req, res) => {
-  // Devolver directamente la respuesta OPTIONS con los headers CORS
-  res.header('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Max-Age', '3600');
-  res.status(204).end();
+  console.log('=== OPTIONS Request ===');
+  console.log('Origin:', req.headers.origin);
+  
+  res.setHeader('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '3600');
+  
+  res.status(204).send();
 });
 
 // CORS para todas las demás rutas
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
-
-// Middleware de logging para diagnóstico
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log('Headers:', req.headers);
-  console.log('Origin:', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range');
   next();
 });
 
