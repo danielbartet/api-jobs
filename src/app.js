@@ -8,25 +8,21 @@ const app = express();
 
 app.use(express.json());
 
-// Middleware CORS específico
+// Middleware CORS con configuración más permisiva
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || config.corsOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Origin not allowed by CORS'));
-    }
-  },
+  origin: true, // Permitir cualquier origen temporalmente para diagnóstico
   credentials: true,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // Middleware de logging para diagnóstico
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log('Headers:', req.headers);
-  if (req.body) console.log('Body:', req.body);
+  console.log('Origin:', req.headers.origin);
   next();
 });
 
