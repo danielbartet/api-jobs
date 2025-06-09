@@ -10,10 +10,12 @@ app.use(express.json());
 
 // Middleware CORS con configuración más permisiva
 app.use(cors({
-  origin: true, // Permitir cualquier origen temporalmente para diagnóstico
+  origin: 'https://jobsandjobs.com',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Length', 'Content-Range'],
+  maxAge: 3600,
   preflightContinue: false,
   optionsSuccessStatus: 204
 }));
