@@ -15,7 +15,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=leadsdb
       - NODE_ENV=production
-      - CORS_ORIGINS=https://jobsandjobs.com,https://www.jobsandjobs.com
+      - CORS_ORIGINS=https://jobsandjobs.com,https://www.jobsandjobs.com,https://www.jobsandjobs.com
+      - CORS_CREDENTIALS=true
     expose:
       - "8086"
     labels:

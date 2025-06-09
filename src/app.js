@@ -6,10 +6,18 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
-// Middleware básico de CORS - permitimos que Traefik maneje los detalles
+// Middleware CORS específico
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin || config.corsOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
 app.use(express.json());
