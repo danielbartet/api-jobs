@@ -20,13 +20,13 @@ app.use(express.json());
 app.options('*', (req, res) => {
   console.log('=== OPTIONS Request ===');
   console.log('Origin:', req.headers.origin);
-  
+
   res.setHeader('Access-Control-Allow-Origin', 'https://jobsandjobs.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Max-Age', '3600');
-  
+
   res.status(204).send();
 });
 

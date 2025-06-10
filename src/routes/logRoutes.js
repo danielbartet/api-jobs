@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/save", async (req, res) => {
     try {
         const logEntry = req.body;
-        
+
         // Log detallado de la petición recibida
         console.log('Recibida petición POST /save:', {
             body: logEntry,
@@ -38,7 +38,7 @@ router.post("/save", async (req, res) => {
                     params: !logEntry.params
                 }
             });
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: "Faltan campos requeridos en el log",
                 missing: {
                     timestamp: !logEntry.timestamp,
