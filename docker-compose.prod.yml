@@ -16,8 +16,6 @@ services:
       - DB_NAME=leadsdb
       - NODE_ENV=production
       - CORS_ORIGINS=https://jobsandjobs.com
-    expose:
-      - "8086"
     networks:
       - api-network
 
@@ -35,6 +33,8 @@ services:
       - api-network
 
 networks:
+  traefik:
+    external: true
   api-network:
     driver: bridge
 
