@@ -21,10 +21,10 @@ services:
       - api-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api-jobs.rule=Host(`api.jobsandjobs.com`)"
-      - "traefik.http.routers.api-jobs.tls=true"
-      - "traefik.http.routers.api-jobs.tls.certresolver=myresolver"
-      - "traefik.http.services.api-jobs.loadbalancer.server.port=8086"
+      - "traefik.http.routers.api-jobs-unique.rule=Host(`api.jobsandjobs.com`)"  # ← Nombre único
+      - "traefik.http.routers.api-jobs-unique.tls=true"
+      - "traefik.http.routers.api-jobs-unique.tls.certresolver=myresolver"
+      - "traefik.http.services.api-jobs-unique.loadbalancer.server.port=8086"  # ← Servicio único
       - "traefik.docker.network=traefik"
 
   database:
