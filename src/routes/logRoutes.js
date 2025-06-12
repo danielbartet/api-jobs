@@ -57,33 +57,56 @@ router.post("/save", async (req, res) => {
     }
 });
 
-// Endpoint para exportar logs a archivo
+// Endpoint para exportar logs como JSON
 router.post("/export", async (req, res) => {
     try {
-        const { startDate, endDate } = req.body;
+        const { startDate, endDate, format = 'json' } = req.body;
         const logs = await getLogs(startDate || new Date(0), endDate || new Date());
 
-        const content = logs.map(log =>
-            `Fecha: ${log.timestamp}\nRuta: ${log.path}\nParámetros: ${JSON.stringify(log.params)}\n-------------------\n`
-        ).join('\n');
+        // Si no hay logs
+        if (logs.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No se encontraron logs en el rango especificado",
+                count: 0,
+                logs: []
+            });
+        }
 
-        const fileName = `url-params-log-${new Date().toISOString().split('T')[0]}.txt`;
-        const filePath = path.join(__dirname, '../../logs', fileName);
+        // Si quiere formato texto (opcional)
+        if (format === 'text') {
+            const content = logs.map(log =>
+                `Fecha: ${log.timestamp}\nRuta: ${log.path}\nParámetros: ${JSON.stringify(log.params)}\n-------------------\n`
+            ).join('\n');
 
-        // Asegurar que el directorio logs existe
-        await fs.mkdir(path.join(__dirname, '../../logs'), { recursive: true });
+            return res.status(200).json({
+                success: true,
+                message: "Logs exportados en formato texto",
+                count: logs.length,
+                format: 'text',
+                content: content
+            });
+        }
 
-        // Guardar el archivo
-        await fs.writeFile(filePath, content, 'utf8');
-
+        // Formato JSON (por defecto)
         res.status(200).json({
             success: true,
-            message: "Archivo generado con éxito",
-            filePath: filePath
+            message: "Logs exportados exitosamente",
+            count: logs.length,
+            dateRange: {
+                startDate: startDate || 'Desde el inicio',
+                endDate: endDate || 'Hasta ahora'
+            },
+            logs: logs
         });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error al exportar logs" });
+        console.error('Error al exportar logs:', error);
+        res.status(500).json({ 
+            success: false,
+            error: "Error al exportar logs",
+            details: error.message 
+        });
     }
 });
 
