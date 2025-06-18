@@ -58,10 +58,43 @@ router.post("/save", async (req, res) => {
 });
 
 // Endpoint para exportar logs como JSON
-router.post("/export", async (req, res) => {
+router.get("/export", async (req, res) => {
     try {
-        const { startDate, endDate, format = 'json' } = req.body;
-        const logs = await getLogs(startDate || new Date(0), endDate || new Date());
+        // 🔑 VERIFICACIÓN DE API KEY
+        const apiKey = req.headers['x-api-key'] || req.query.apiKey;
+        const validApiKey = process.env.LOGS_API_KEY || 'clave-super-secreta-logs-2024';
+
+        console.log('Intento de acceso a /export:', {
+            hasApiKey: Boolean(apiKey),
+            providedKey: apiKey ? `${apiKey.substring(0, 8)}...` : 'none',
+            ip: req.ip || req.connection.remoteAddress,
+            userAgent: req.headers['user-agent']
+        });
+
+        if (!apiKey || apiKey !== validApiKey) {
+            console.warn('🚫 Acceso denegado a /export - API Key inválida:', {
+                providedKey: apiKey,
+                ip: req.ip || req.connection.remoteAddress
+            });
+
+            return res.status(401).json({
+                success: false,
+                error: "API Key requerida o inválida",
+                message: "Acceso no autorizado. Proporciona una API Key válida en el header 'x-api-key' o como parámetro 'apiKey'"
+            });
+        }
+
+        console.log('✅ Acceso autorizado a /export');
+
+        const { startDate, endDate, format = 'json', limit = 1000 } = req.query;
+
+        // Convertir strings a Date objects si se proporcionan
+        const start = startDate ? new Date(startDate) : new Date(0);
+        const end = endDate ? new Date(endDate) : new Date();
+
+        const logs = await getLogs(start, end, parseInt(limit));
+
+        console.log(`📊 Exportando ${logs.length} logs`);
 
         // Si no hay logs
         if (logs.length === 0) {
@@ -102,10 +135,10 @@ router.post("/export", async (req, res) => {
 
     } catch (error) {
         console.error('Error al exportar logs:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
             error: "Error al exportar logs",
-            details: error.message 
+            details: error.message
         });
     }
 });

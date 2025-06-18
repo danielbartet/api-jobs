@@ -16,6 +16,7 @@ services:
       - DB_NAME=leadsdb
       - NODE_ENV=production
       - CORS_ORIGINS=https://jobsandjobs.com
+      - LOGS_API_KEY=${LOGS_API_KEY:-api-key-secret-2025}
     networks:
       - traefik
       - api-network
